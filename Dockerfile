@@ -10,6 +10,9 @@ RUN go mod download
 
 COPY . .
 
+# Run mod tidy to align go.mod in Alpine to prevent mismatch errors
+RUN go mod tidy
+
 # Build statically linked binary
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o dez-cron .
 
