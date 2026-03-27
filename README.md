@@ -24,10 +24,17 @@ A fast, dynamic HTTP Cron Job scheduling Backend and Headless API Dashboard buil
     ```
 
 2. **Run the server locally**:
+   Run standardly (manual restart on changes):
 
     ```bash
     go mod tidy
     go run main.go
+    ```
+
+    **OR** for Development **Hot-Reloading/Live Server**, just use:
+
+    ```bash
+    air
     ```
 
 3. **Log in to Admin Dashboard**:
