@@ -77,7 +77,6 @@ func ReloadAllJobs() {
 }
 
 func ExecuteJob(job models.JobConfig) {
-	log.Printf("Executing job %s: %s\n", job.Title, job.URL)
 	startTime := time.Now()
 
 	client := &http.Client{Timeout: 30 * time.Second}
@@ -196,7 +195,12 @@ func ExecuteJob(job models.JobConfig) {
 	if logErr != nil {
 		errLogger.Println("Failed to write log to DB:", logErr)
 	}
-	log.Printf("Finished job %s. Success: %v. Duration: %d ms\n", job.ID.Hex(), isSuccess, duration)
+	
+	if isSuccess {
+		fmt.Printf("✅ Finished job %s (%s) in %d ms.\n", job.Title, job.ID.Hex(), duration)
+	} else {
+		errLogger.Printf("❌ Failed job %s (%s). HTTP: %d. Error: %s (Duration: %d ms)\n", job.Title, job.ID.Hex(), statusCode, errMsg, duration)
+	}
 
 	if shouldDisable {
 		go ReloadAllJobs()

@@ -214,6 +214,12 @@ func DeleteJob(c *gin.Context) {
 		return
 	}
 
+	// Delete associated logs
+	_, logErr := db.DB.Collection("job_logs").DeleteMany(ctx, bson.M{"job_id": id})
+	if logErr != nil {
+		fmt.Printf("Warning: Failed to delete job logs for %s: %v\n", id.Hex(), logErr)
+	}
+
 	scheduler.ReloadAllJobs()
 
 	c.JSON(http.StatusOK, gin.H{"message": "Job deleted successfully"})
