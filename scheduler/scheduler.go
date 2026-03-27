@@ -110,13 +110,13 @@ func ExecuteJob(job models.JobConfig) {
 				statusCode = resp.StatusCode
 				isSuccess = statusCode >= 200 && statusCode < 300
 				
-				bodyBytes, _ := io.ReadAll(resp.Body)
+				limitReader := io.LimitReader(resp.Body, 10240)
+				bodyBytes, _ := io.ReadAll(limitReader)
 				resp.Body.Close()
 				
-				if len(bodyBytes) > 20000 {
-					responseBody = string(bodyBytes[:20000]) + "\n...[response truncated]"
-				} else {
-					responseBody = string(bodyBytes)
+				responseBody = string(bodyBytes)
+				if len(bodyBytes) == 10240 {
+					responseBody += "\n...[response truncated to 10KB]"
 				}
 
 				if !isSuccess {
