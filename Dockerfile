@@ -24,6 +24,8 @@ COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 
 WORKDIR /app
 COPY --from=builder /app/dez-cron .
+# Copy static files to the final reduced image
+COPY --from=builder /app/assets ./assets
 
 EXPOSE 8080
 

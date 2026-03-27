@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/afridhozega/dez-cron/db"
@@ -19,6 +20,7 @@ import (
 
 var Cron *cron.Cron
 var ActiveJobs = make(map[string]cron.EntryID)
+var errLogger = log.New(os.Stderr, "ERROR: ", log.LstdFlags)
 
 func Init() {
 	Cron = cron.New()
@@ -33,14 +35,14 @@ func ReloadAllJobs() {
 	collection := db.DB.Collection("jobs")
 	cursor, err := collection.Find(ctx, bson.M{"is_active": true})
 	if err != nil {
-		log.Println("Error finding jobs:", err)
+		errLogger.Println("Error finding jobs:", err)
 		return
 	}
 	defer cursor.Close(ctx)
 
 	var jobs []models.JobConfig
 	if err = cursor.All(ctx, &jobs); err != nil {
-		log.Println("Error decoding jobs:", err)
+		errLogger.Println("Error decoding jobs:", err)
 		return
 	}
 
@@ -66,7 +68,7 @@ func ReloadAllJobs() {
 			ExecuteJob(job)
 		})
 		if err != nil {
-			log.Printf("Failed to schedule job %s: %v\n", job.ID.Hex(), err)
+			errLogger.Printf("Failed to schedule job %s: %v\n", job.ID.Hex(), err)
 			continue
 		}
 		ActiveJobs[job.ID.Hex()] = entryID
@@ -175,7 +177,7 @@ func ExecuteJob(job models.JobConfig) {
 	update := bson.M{"$set": updateFields}
 	_, updateErr := db.DB.Collection("jobs").UpdateOne(ctx, bson.M{"_id": job.ID}, update)
 	if updateErr != nil {
-		log.Println("Failed to update job status in DB:", updateErr)
+		errLogger.Println("Failed to update job status in DB:", updateErr)
 	}
 
 	// Create Log
@@ -192,7 +194,7 @@ func ExecuteJob(job models.JobConfig) {
 
 	_, logErr := db.DB.Collection("job_logs").InsertOne(ctx, logEntry)
 	if logErr != nil {
-		log.Println("Failed to write log to DB:", logErr)
+		errLogger.Println("Failed to write log to DB:", logErr)
 	}
 	log.Printf("Finished job %s. Success: %v. Duration: %d ms\n", job.ID.Hex(), isSuccess, duration)
 
@@ -214,7 +216,7 @@ func sendAlertWebhook(job models.JobConfig, failures int) {
 	client := http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Post(webhookUrl, "application/json", bytes.NewBuffer(body))
 	if err != nil {
-		log.Println("Failed to send alert webhook:", err)
+		errLogger.Println("Failed to send alert webhook:", err)
 		return
 	}
 	defer resp.Body.Close()

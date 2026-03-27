@@ -33,6 +33,11 @@ func main() {
 	// Setup CORS
 	r.Use(cors.Default())
 
+	// Serve static assets and favicon natively
+	r.Static("/assets", "./assets")
+	r.StaticFile("/favicon.ico", "./assets/favicon.png")
+	r.StaticFile("/favicon.png", "./assets/favicon.png")
+
 	// Register API Routes
 	handlers.RegisterRoutes(r)
 	

@@ -133,6 +133,8 @@ func ShowDocs(c *gin.Context) {
 <html>
   <head>
     <title>Dez Cron API Reference</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
     <!-- needed for adaptive design -->
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">

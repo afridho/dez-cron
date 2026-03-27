@@ -113,6 +113,8 @@ func ShowLogin(c *gin.Context) {
 	<!DOCTYPE html>
 	<html>
 	<head><title>Login - Dez Cron Admin</title>
+	<!-- Favicon -->
+	<link rel="icon" type="image/png" href="/assets/favicon.png">
 	<style>body{font-family:sans-serif;background:#f4f4f5;display:flex;justify-content:center;align-items:center;height:100vh;}
 	.box{background:white;padding:30px;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);text-align:center;}
 	input{display:block;margin:10px auto;padding:10px;width:100%;box-sizing:border-box;}
@@ -186,6 +188,8 @@ func ShowDashboard(c *gin.Context) {
 	<!DOCTYPE html>
 	<html>
 	<head><title>Dashboard - Dez Cron</title>
+	<!-- Favicon -->
+	<link rel="icon" type="image/png" href="/assets/favicon.png">
 	<style>body{font-family:sans-serif;background:#f4f4f5;padding:50px;}
 	.box{background:white;padding:30px;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);max-width:600px;margin:auto;}
 	.token-box{background:#f1f5f9;padding:15px;font-family:monospace;word-break:break-all;border:1px dashed #cbd5e1;margin:10px 0;}
