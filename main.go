@@ -13,6 +13,9 @@ import (
 )
 
 func main() {
+	// Set default log output to Stdout so Railway logs them as normal (not error)
+	log.SetOutput(os.Stdout)
+
 	// Load environment variables
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found; proceeding with system env vars")
