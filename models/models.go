@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -22,9 +23,35 @@ type JobConfig struct {
 	ConsecutiveFailures int                `bson:"consecutive_failures" json:"consecutive_failures"`
 	CreatedAt           time.Time          `bson:"created_at" json:"created_at"`
 	UpdatedAt           time.Time          `bson:"updated_at" json:"updated_at"`
-	LastExecution       time.Time          `bson:"last_execution,omitempty" json:"last_execution,omitempty"`
-	NextExecution       time.Time          `bson:"next_execution,omitempty" json:"next_execution,omitempty"`
+	LastExecution       time.Time          `bson:"last_execution,omitempty" json:"-"`
+	NextExecution       time.Time          `bson:"next_execution,omitempty" json:"-"`
 	Failed              bool               `bson:"failed" json:"failed"`
+}
+
+func (j JobConfig) MarshalJSON() ([]byte, error) {
+	type Alias JobConfig
+
+	var last, next *int64
+
+	if !j.LastExecution.IsZero() && j.LastExecution.Year() > 1 {
+		ts := j.LastExecution.Unix()
+		last = &ts
+	}
+
+	if !j.NextExecution.IsZero() && j.NextExecution.Year() > 1 {
+		ts := j.NextExecution.Unix()
+		next = &ts
+	}
+
+	return json.Marshal(&struct {
+		*Alias
+		LastExecution *int64 `json:"lastExecution"`
+		NextExecution *int64 `json:"nextExecution"`
+	}{
+		Alias:         (*Alias)(j),
+		LastExecution: last,
+		NextExecution: next,
+	})
 }
 
 type JobLog struct {
