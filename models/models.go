@@ -48,7 +48,7 @@ func (j JobConfig) MarshalJSON() ([]byte, error) {
 		LastExecution *int64 `json:"lastExecution"`
 		NextExecution *int64 `json:"nextExecution"`
 	}{
-		Alias:         (*Alias)(j),
+		Alias:         (*Alias)(&j),
 		LastExecution: last,
 		NextExecution: next,
 	})
