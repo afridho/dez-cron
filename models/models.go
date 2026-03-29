@@ -25,6 +25,7 @@ type JobConfig struct {
 	UpdatedAt           time.Time          `bson:"updated_at" json:"updated_at"`
 	LastExecution       time.Time          `bson:"last_execution,omitempty" json:"-"`
 	NextExecution       time.Time          `bson:"next_execution,omitempty" json:"-"`
+	LastDurationMs      int64              `bson:"last_duration_ms" json:"lastDuration"`
 	Failed              bool               `bson:"failed" json:"failed"`
 }
 

@@ -154,9 +154,10 @@ func ExecuteJob(job models.JobConfig) {
 	defer cancel()
 
 	updateFields := bson.M{
-		"last_execution": startTime,
-		"next_execution": nextExec,
-		"failed":         !isSuccess,
+		"last_execution":   startTime,
+		"next_execution":   nextExec,
+		"last_duration_ms": duration,
+		"failed":           !isSuccess,
 	}
 
 	shouldDisable := false
