@@ -194,7 +194,14 @@ func UpdateJob(c *gin.Context) {
 
 	scheduler.ReloadAllJobs()
 
-	c.JSON(http.StatusOK, gin.H{"message": "Job updated successfully"})
+	var updatedJob models.JobConfig
+	FindErr := db.DB.Collection("jobs").FindOne(ctx, bson.M{"_id": id}).Decode(&updatedJob)
+	if FindErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated job after edit"})
+		return
+	}
+
+	c.JSON(http.StatusOK, updatedJob)
 }
 
 func DeleteJob(c *gin.Context) {
